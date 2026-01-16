@@ -16,32 +16,36 @@ class PagesTable
 {
     public static function configure(Table $table): Table
     {
-        $defaultLocale = Language::query()
+        $defaultLangId = Language::query()
             ->where('is_default', true)
-            ->value('code') ?? app()->getLocale();
+            ->value('id');
 
         return $table
             ->columns([
                 TextColumn::make('title')
                     ->label('Başlık')
-                    ->state(fn ($record) => $record->translate($defaultLocale)?->title)
+                    ->state(fn($record) => $record->translations()
+                        ->where('language_id', $defaultLangId)
+                        ->first()?->title ?? '—')
                     ->searchable()
                     ->sortable(),
+
                 TextColumn::make('slug')
                     ->label('Slug')
-                    ->state(fn ($record) => $record->translate($defaultLocale)?->slug)
+                    ->state(fn($record) => $record->translations()
+                        ->where('language_id', $defaultLangId)
+                        ->first()?->slug ?? '—')
                     ->toggleable()
-                    ->searchable(),  // arama yapılabilir
+                    ->searchable(),
+
                 IconColumn::make('is_active')
                     ->label('Aktif')
-                    ->boolean(),  // true/false icon gösterir
+                    ->boolean(),
+
                 TextColumn::make('created_at')
                     ->label('Oluşturulma Tarihi')
                     ->dateTime()
                     ->sortable(),
-            ])
-            ->filters([
-                //
             ])
             ->recordActions([
                 ViewAction::make(),

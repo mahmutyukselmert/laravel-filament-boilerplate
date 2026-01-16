@@ -6,12 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Menu extends Model
 {
-    protected $fillable = ['name', 'key', 'active'];
+    protected $fillable = ['name', 'key', 'location', 'active'];
 
     public function items()
     {
-        return $this->hasMany(MenuItem::class)
-            ->whereNull('parent_id')
-            ->orderBy('sort_order');
+        return $this->hasMany(MenuItem::class);
     }
 }

@@ -39,9 +39,8 @@ class LanguageForm
                         ->label('Sıralama')
                         ->numeric()
                         ->required()
-                        // DİNAMİK VARSAYILAN DEĞER:
                         ->default(fn () => Language::count() + 1),
-                ])->columns(2), // Formu daha derli toplu göstermek için 2 sütuna böldük
+                ])->columns(2)->columnSpanFull(),
         ]);
     }
 }

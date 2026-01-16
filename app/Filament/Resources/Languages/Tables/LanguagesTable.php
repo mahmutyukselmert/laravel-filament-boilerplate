@@ -39,7 +39,7 @@ class LanguagesTable
             ])
             ->defaultSort('sort_order')
             ->recordActions([
-                ViewAction::make(),
+                //ViewAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([

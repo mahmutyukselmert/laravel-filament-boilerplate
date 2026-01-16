@@ -20,7 +20,7 @@ class LanguageResource extends Resource
 {
     protected static ?string $model = Language::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedLanguage;
 
     protected static ?string $modelLabel = 'Dil';
     protected static ?string $pluralModelLabel = 'Dil Yönetimi';
@@ -55,7 +55,7 @@ class LanguageResource extends Resource
         return [
             'index' => ListLanguages::route('/'),
             'create' => CreateLanguage::route('/create'),
-            'view' => ViewLanguage::route('/{record}'),
+            //'view' => ViewLanguage::route('/{record}'),
             'edit' => EditLanguage::route('/{record}/edit'),
         ];
     }

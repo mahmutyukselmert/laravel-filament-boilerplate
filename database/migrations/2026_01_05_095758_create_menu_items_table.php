@@ -24,8 +24,6 @@ return new class extends Migration {
             // 🔗 BAĞLANTI SİSTEMİ
             $table->nullableMorphs('linkable');  // linkable_type + linkable_id
 
-            $table->string('title')->nullable();
-
             // Manuel URL (dış link / custom)
             $table->string('url')->nullable();
 

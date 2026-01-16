@@ -26,19 +26,18 @@ class EditPage extends EditRecord
     {
         unset($data['translations']);
 
-        $translatedAttributes = $this->record->translatedAttributes ?? [];
+        $languages = Language::where('active', true)->orderBy('sort_order')->get();
 
-        $locales = Language::query()
-            ->where('active', true)
-            ->orderBy('sort_order')
-            ->pluck('code')
-            ->all();
+        foreach ($languages as $lang) {
+            $translation = $this->record->translations()
+                ->where('language_id', $lang->id)
+                ->first();
 
-        foreach ($locales as $locale) {
-            $translation = $this->record->translate($locale, false);
-
-            $data[$locale] = $translation
-                ? Arr::only($translation->toArray(), $translatedAttributes)
+            $data['translations'][$lang->id] = $translation
+                ? Arr::only($translation->toArray(), [
+                    'title', 'slug', 'subtitle', 'short_description',
+                    'content', 'sections', 'meta_title', 'meta_description', 'meta_keywords'
+                ])
                 : [];
         }
 
@@ -47,29 +46,20 @@ class EditPage extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $record->fill(Arr::only($data, [
-            'image',
-            'is_active',
-            'sort_order',
-        ]));
-
-        $locales = Language::query()
-            ->where('active', true)
-            ->orderBy('sort_order')
-            ->pluck('code')
-            ->all();
-
-        foreach ($locales as $locale) {
-            if (! isset($data[$locale]) || ! is_array($data[$locale])) {
-                continue;
-            }
-
-            $record->translateOrNew($locale)->fill($data[$locale]);
-        }
-
+        // Ana tablo güncelle
+        $record->fill(Arr::only($data, ['image', 'is_active', 'sort_order']));
         $record->save();
+
+        // Çeviriler güncelle
+        if (!empty($data['translations'])) {
+            foreach ($data['translations'] as $langId => $fields) {
+                $record->translations()->updateOrCreate(
+                    ['language_id' => $langId],
+                    $fields
+                );
+            }
+        }
 
         return $record;
     }
 }
-

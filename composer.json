@@ -9,8 +9,10 @@
         "php": "^8.2",
         "astrotomic/laravel-translatable": "^11.16",
         "filament/filament": "^4.4",
+        "intervention/image": "^3.11",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
+        "solution-forest/filament-tree": "*",
         "spatie/laravel-translatable": "^6.12"
     },
     "require-dev": {

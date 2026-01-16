@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name');  // Header Menü
             $table->string('key')->unique();  // header_main
+            $table->string('location')->default('header');
             $table->boolean('active')->default(true);
             $table->timestamps();
         });
