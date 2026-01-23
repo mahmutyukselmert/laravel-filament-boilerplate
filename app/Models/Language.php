@@ -14,6 +14,11 @@ class Language extends Model
         'sort_order',
     ];
 
+    public function scopeActive($query)
+    {
+        return $query->where('active', 1);
+    }
+
     protected static function booted(): void
     {
         static::saving(function (self $language): void {

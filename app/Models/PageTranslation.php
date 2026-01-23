@@ -18,4 +18,9 @@ class PageTranslation extends Model
     protected $casts = [
         'sections' => 'array',
     ];
+
+    public function page()
+    {
+        return $this->belongsTo(Page::class, 'page_id');
+    }
 }

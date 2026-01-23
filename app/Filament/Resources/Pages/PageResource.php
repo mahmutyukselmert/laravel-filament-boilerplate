@@ -25,11 +25,10 @@ class PageResource extends Resource
     // ✅ Tip düzeltildi
     protected static BackedEnum|string|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static ?string $navigationLabel = 'Sayfalar';
-
+    protected static ?string $navigationLabel = 'Diğer Sayfalar';
     protected static ?string $modelLabel = 'Sayfa';
-
-    protected static ?string $pluralModelLabel = 'Sayfalar';
+    protected static ?string $pluralModelLabel = 'Diğer Sayfalar';
+    protected static ?string $recordTitleAttribute = 'Sayfa';
 
     public static function form(Schema $schema): Schema
     {

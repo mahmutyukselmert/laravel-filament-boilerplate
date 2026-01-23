@@ -39,7 +39,6 @@ class PageForm
                                 ->tabs(
                                     $activeLanguages->map(function ($lang) {
                                         return Tabs\Tab::make($lang->name)
-                                            // State path'i zorunlu olarak ID yapıyoruz ki translations tablosuyla ID üzerinden eşleşsin
                                             ->schema([
                                                 TextInput::make("translations.{$lang->id}.title")
                                                     ->label('Sayfa Başlığı')

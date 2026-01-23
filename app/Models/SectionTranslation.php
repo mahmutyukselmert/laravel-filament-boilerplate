@@ -7,9 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 class SectionTranslation extends Model
 {
     public $timestamps = false;
-    protected $fillable = ['title', 'content', 'language_id', 'section_id'];
-    
+
+    protected $fillable = [
+        'title',
+        'subtitle',
+        'content',
+        'image',
+        'language_id',
+        'section_id',
+        'extra_fields',
+    ];
+
     protected $casts = [
-        'content' => 'array', 
+        'content' => 'array',
+        'extra_fields' => 'array',
     ];
 }
