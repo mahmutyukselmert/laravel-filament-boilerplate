@@ -1,0 +1,8 @@
+<svg viewBox="0 0 21 21" fill="currentColor" width="32" height="32" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" fill="none" transform="translate(2 3)" fill-rule="evenodd">
+        <path d="M8 16c4.438 0 8-3.5263 8-7.9643S12.438 0 8 0 0 3.5977 0 8.0357 3.562 16 8 16z" />
+        <path d="M1 5h14" />
+        <path d="M1 11h14" />
+        <path d="M8 16c2.219 0 4-3.5263 4-7.9643S10.219 0 8 0 4 3.5977 4 8.0357 5.781 16 8 16z" />
+    </g>
+</svg>

@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('name');  // Header Menü
             $table->string('key')->unique();  // header_main
             $table->string('location')->default('header');
+            $table->integer('sort_order')->default(0);
             $table->boolean('active')->default(true);
             $table->timestamps();
         });

@@ -15,6 +15,11 @@ class LanguageForm
         return $schema->components([
             Section::make('Dil Bilgileri')
                 ->schema([
+                    TextInput::make('title')
+                        ->label('Dil İsimi')
+                        ->placeholder('Örn: Türkçe')
+                        ->required(),
+
                     TextInput::make('name')
                         ->label('Dil Adı')
                         ->placeholder('Örn: Türkçe')

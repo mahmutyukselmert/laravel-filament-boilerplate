@@ -28,6 +28,11 @@ class LanguageResource extends Resource
     protected static ?string $navigationLabel = 'Dil Yönetimi';
     protected static ?int $navigationSort = 10;
 
+    public static function getNavigationGroup(): ?string
+    {
+        return 'Dil Ayarları';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return LanguageForm::configure($schema);

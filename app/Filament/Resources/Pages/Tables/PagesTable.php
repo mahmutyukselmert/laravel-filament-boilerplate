@@ -7,10 +7,15 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
+use Filament\Actions\Action;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\ForceDeleteAction;
 
 class PagesTable
 {
@@ -21,6 +26,10 @@ class PagesTable
             ->value('id');
 
         return $table
+            ->filters([
+                TrashedFilter::make(),
+            ])
+            ->reorderable('sort_order')
             ->columns([
                 TextColumn::make('title')
                     ->label('Başlık')
@@ -48,15 +57,23 @@ class PagesTable
                     ->sortable(),
             ])
             ->recordActions([
-                ViewAction::make(),
+                Action::make('view')
+                ->label('Görüntüle')
+                ->icon('heroicon-o-eye')
+                ->url(fn ($record) => url($record->translations()->where('language_id', $defaultLangId)->first()?->slug ?? $record->slug))
+                ->openUrlInNewTab(),
                 EditAction::make(),
                 DeleteAction::make(),
+                RestoreAction::make(),
+                ForceDeleteAction::make(),
             ])
             ->actionsColumnLabel('İşlemler')
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
                 ]),
-            ]);
+            ])->defaultSort('sort_order', 'asc');
     }
 }

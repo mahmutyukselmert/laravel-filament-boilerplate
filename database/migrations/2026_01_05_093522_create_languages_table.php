@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('languages', function (Blueprint $table) {
             $table->id();
             $table->string('code', 5)->unique();  // tr, en, de
+            $table->string('title');
             $table->string('name');  // Türkçe, English
             $table->boolean('is_default')->default(false);
             $table->boolean('active')->default(true);

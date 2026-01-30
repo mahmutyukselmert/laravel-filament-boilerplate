@@ -2,17 +2,19 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "laravel/laravel",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Bu Laravel Filament Panel Eliz Yazılım İçin Mahmut Yüksel MERT tarafından geliştirilmiştir.",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
         "php": "^8.2",
         "astrotomic/laravel-translatable": "^11.16",
         "filament/filament": "^4.4",
+        "filament/spatie-laravel-media-library-plugin": "^4.4",
         "intervention/image": "^3.11",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "solution-forest/filament-tree": "*",
+        "spatie/laravel-medialibrary": "^11.17",
         "spatie/laravel-translatable": "^6.12"
     },
     "require-dev": {
@@ -32,8 +34,9 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "app/Helpers/ContactHelper.php",
-            "app/Helpers/LanguageHelper.php"
+            "app/Helpers/LanguageHelper.php",
+            "app/Helpers/TranslateHelper.php",
+            "app/Helpers/WebHelper.php"
         ]
     },
     "autoload-dev": {

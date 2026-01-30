@@ -8,6 +8,7 @@ class Language extends Model
 {
     protected $fillable = [
         'name',
+        'title',
         'code',
         'is_default',
         'active',
@@ -39,5 +40,16 @@ class Language extends Model
                     ->update(['is_default' => false]);
             });
         });
+    }
+
+    public static function getServicePrefix($locale)
+    {
+        $prefixes = [
+            'tr' => 'transfer',
+            'en' => 'services',
+            'de' => 'leistungen',
+            'ru' => 'uslugi'
+        ];
+        return $prefixes[$locale] ?? 'services';
     }
 }

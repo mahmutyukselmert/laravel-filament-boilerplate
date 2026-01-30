@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('pages', function (Blueprint $table) {
             $table->id();
+            $table->string("template")->default(null)->nullable();
             $table->string('image')->nullable();
             $table->boolean('is_active')->default(true);
             $table->integer('sort_order')->default(0);

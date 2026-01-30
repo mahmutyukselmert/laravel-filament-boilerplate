@@ -22,12 +22,13 @@ class PageResource extends Resource
 {
     protected static ?string $model = Page::class;
 
-    // ✅ Tip düzeltildi
-    protected static BackedEnum|string|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static BackedEnum|string|null $navigationIcon = Heroicon::OutlinedClipboardDocument;
 
-    protected static ?string $navigationLabel = 'Diğer Sayfalar';
+    protected static ?int $navigationSort = 3;
+
+    protected static ?string $navigationLabel = 'Sayfalar';
     protected static ?string $modelLabel = 'Sayfa';
-    protected static ?string $pluralModelLabel = 'Diğer Sayfalar';
+    protected static ?string $pluralModelLabel = 'Sayfalar';
     protected static ?string $recordTitleAttribute = 'Sayfa';
 
     public static function form(Schema $schema): Schema
@@ -50,7 +51,6 @@ class PageResource extends Resource
         return [
             'index' => ListPages::route('/'),
             'create' => CreatePage::route('/create'),
-            'view' => ViewPage::route('/{record}'),
             'edit' => EditPage::route('/{record}/edit'),
         ];
     }
@@ -94,4 +94,5 @@ class PageResource extends Resource
             }
         }
     }
+
 }

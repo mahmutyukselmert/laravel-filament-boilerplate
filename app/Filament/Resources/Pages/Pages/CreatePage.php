@@ -16,28 +16,27 @@ class CreatePage extends CreateRecord
     protected function handleRecordCreation(array $data): Model
     {
         $page = new Page();
-
         $page->fill(Arr::only($data, [
             'image',
             'is_active',
+            'template',
             'sort_order',
         ]));
-
-        $locales = Language::query()
-            ->where('active', true)
-            ->orderBy('sort_order')
-            ->pluck('code')
-            ->all();
-
-        foreach ($locales as $locale) {
-            if (! isset($data[$locale]) || ! is_array($data[$locale])) {
-                continue;
-            }
-
-            $page->translateOrNew($locale)->fill($data[$locale]);
-        }
-
         $page->save();
+
+        if (!empty($data['translations'])) {
+            foreach ($data['translations'] as $langId => $fields) {
+                
+                if (empty($fields['title'])) {
+                    continue;
+                }
+
+                $page->translations()->create(array_merge(
+                    ['language_id' => $langId],
+                    $fields
+                ));
+            }
+        }
 
         return $page;
     }

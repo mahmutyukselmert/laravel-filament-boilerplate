@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
 class SiteSetting extends Model
 {
@@ -10,42 +12,37 @@ class SiteSetting extends Model
         'site_name',
         'email',
         'phone',
+        'phone_gsm',
+        'whatsapp',
+        'fax',
+        'address',
+        'map',
         'logo',
+        'scrolled_logo',
         'footer_logo',
         'contacts',
+        'social_extra',
+        'facebook',
+        'instagram',
+        'linkedin',
+        'x_twitter',
+        'youtube',
+        'maintenance_mode',
+        'extra_fields',
     ];
 
     // JSON cast
     protected $casts = [
         'contacts' => 'array',
+        'social_extra' => 'array',
+        'extra_fields' => 'array',
     ];
-
-    // Accessor: Sadece WhatsApp numarasını döndürmek için
-    public function getWhatsappAttribute(): ?string
+    
+    public function getPhone(): ?string
     {
-        return collect($this->contacts)
-            ->firstWhere('type', 'mobile')['value'] ?? null;
+        return $this->phone
+            ? \App\Helpers\ContactHelper::format($this->phone)
+            : null;
     }
 
-    // Accessor: Display hali
-    public function getWhatsappDisplayAttribute(): ?string
-    {
-        return collect($this->contacts)
-            ->firstWhere('type', 'mobile')['display'] ?? null;
-    }
-
-    // Link üretmek için helper kullanabilirsin
-    public function getContactLink(string $type): ?string
-    {
-        $contact = collect($this->contacts)->firstWhere('type', $type);
-
-        return $contact ? \App\Helpers\ContactHelper::link($contact['value'], $type) : null;
-    }
-
-    public function getContactDisplay(string $type): ?string
-    {
-        $contact = collect($this->contacts)->firstWhere('type', $type);
-
-        return $contact['display'] ?? null;
-    }
 }

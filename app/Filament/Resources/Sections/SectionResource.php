@@ -20,7 +20,9 @@ class SectionResource extends Resource
 {
     protected static ?string $model = Section::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSquare3Stack3d;
+
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $navigationLabel = 'Bölümler';
     protected static ?string $modelLabel = 'Bölüm';

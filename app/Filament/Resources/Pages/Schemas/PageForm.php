@@ -60,8 +60,6 @@ class PageForm
                                                 Builder::make("translations.{$lang->id}.sections")
                                                     ->label('Esnek Sayfa Bölümleri')
                                                     ->blocks([
-                                                        static::getHeroBlock(),
-                                                        static::getStatsBlock(),
                                                         static::getGlobalSectionBlock(),
                                                     ])
                                                     ->collapsible()
@@ -117,6 +115,17 @@ class PageForm
                                 ->label('Sıralama')
                                 ->numeric()
                                 ->default(0),
+                                
+                            Select::make('template')
+                                ->label('Sayfa Teması')
+                                ->default(null)
+                                ->options([
+                                    'home'     => 'Anasayfa',
+                                    'default'  => 'Varsayılan Şablon',
+                                    'about'    => 'Hakkımızda',
+                                    'contact'  => 'İletişim',
+                                    'services' => 'Hizmetler',
+                                ])
                         ])
                         ->columnSpan(3),
                 ])

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Menus\Schemas;
 
+use App\Models\Language;
+
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
@@ -23,10 +25,12 @@ class MenuForm
 {
     public static function configure(Schema $schema): Schema
     {
+        $activeLanguages = Language::where('active', true)->orderBy('sort_order')->get();
+
         return $schema
             ->components([
                 Section::make('Menü Bilgileri')
-                    ->schema([
+                    ->schema([  
                         TextInput::make('name')
                             ->label('Menü Adı')
                             ->required()
@@ -48,6 +52,22 @@ class MenuForm
                     ])
                     ->columns(4)
                     ->columnSpanFull(),
+
+                Section::make('Menü Ek Özellikler')
+                        ->schema([
+                            Tabs::make('Languages')
+                                ->tabs(
+                                    $activeLanguages->map(function ($lang) {
+                                        return Tabs\Tab::make($lang->name)
+                                            ->schema([
+                                                TextInput::make("translations.{$lang->id}.title")
+                                                    ->label('Menü Başlığı')
+                                            ]);
+                                    })->toArray()
+                                )
+                                ->columnSpanFull(),
+                        ])
+                        ->columnSpan(9),
             ]);
     }
 }

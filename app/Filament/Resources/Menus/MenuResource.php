@@ -23,6 +23,9 @@ use BackedEnum;
 class MenuResource extends Resource
 {
     protected static ?string $model = Menu::class;
+
+    protected static ?int $navigationSort = 2;
+
     protected static BackedEnum|string|null $navigationIcon = 'heroicon-o-bars-3';
 
     protected static ?string $recordTitleAttribute = 'Menüler';

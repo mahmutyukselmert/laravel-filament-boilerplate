@@ -1,0 +1,24 @@
+<?php
+
+namespace App\Filament\Resources\StaticTranslations\Pages;
+
+use App\Filament\Resources\StaticTranslations\StaticTranslationResource;
+use Filament\Resources\Pages\CreateRecord;
+
+class CreateStaticTranslation extends CreateRecord
+{
+    protected static string $resource = StaticTranslationResource::class;
+
+    // EditStaticTranslation.php ve CreateStaticTranslation.php içine:
+    protected function afterSave(): void
+    {
+        // Kayıt güncellendiğinde 'static_translations' isimli cache'i sil
+        cache()->forget('static_translations');
+    }
+
+    protected function afterCreate(): void
+    {
+        // Yeni kayıt eklendiğinde de cache'i sil
+        cache()->forget('static_translations');
+    }
+}

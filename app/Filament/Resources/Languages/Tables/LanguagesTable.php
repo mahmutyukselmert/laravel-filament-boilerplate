@@ -16,8 +16,13 @@ class LanguagesTable
     {
         return $table
             ->columns([
+                TextColumn::make('title')
+                    ->label('Dil Adı')
+                    ->searchable()
+                    ->sortable(),
+
                 TextColumn::make('name')
-                    ->label('Dil')
+                    ->label('Dil Global Adı')
                     ->searchable()
                     ->sortable(),
 

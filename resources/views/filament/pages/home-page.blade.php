@@ -1,13 +1,13 @@
 <x-filament-panels::page>
-    <form wire:submit="save" class="space-y-6">
+    <form wire:submit.prevent="save" class="space-y-6">
         {{ $this->form }}
 
-        <div class="flex flex-wrap items-center gap-4 justify-start mt-3">
-            <x-filament::button type="submit">
+        <div class="flex items-center gap-3" style="margin-top: 2rem; margin-bottom: 1rem; margin-right: 1rem;">
+             <x-filament::button type="submit">
                 Değişiklikleri Kaydet
             </x-filament::button>
             
-            <x-filament::button color="gray" tag="a" :href="static::getNavigationUrl()">
+            <x-filament::button color="gray" tag="a" :href="static::getUrl()" style="margin-left: 1rem;">
                 İptal Et
             </x-filament::button>
         </div>

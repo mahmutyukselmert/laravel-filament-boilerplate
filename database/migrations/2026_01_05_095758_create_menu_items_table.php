@@ -21,10 +21,8 @@ return new class extends Migration {
                 ->constrained('menu_items')
                 ->cascadeOnDelete();
 
-            // 🔗 BAĞLANTI SİSTEMİ
             $table->nullableMorphs('linkable');  // linkable_type + linkable_id
 
-            // Manuel URL (dış link / custom)
             $table->string('url')->nullable();
 
             $table->string('target')->default('_self');

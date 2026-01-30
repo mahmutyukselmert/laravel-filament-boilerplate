@@ -9,7 +9,7 @@ class Page extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['image', 'is_active', 'sort_order'];
+    protected $fillable = ['template', 'image', 'is_active', 'sort_order'];
 
     protected $casts = [
         'is_active' => 'boolean',

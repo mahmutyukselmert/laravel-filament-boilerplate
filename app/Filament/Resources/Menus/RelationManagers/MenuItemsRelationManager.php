@@ -4,24 +4,31 @@ namespace App\Filament\Resources\Menus\RelationManagers;
 
 use App\Models\Language;
 use App\Models\MenuItem;
+
+use App\Models\Page;
+use App\Models\Service;
+
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Select;
-use Filament\Schemas\Components\Tabs;
-use Filament\Schemas\Components\TextInput;
-use Filament\Schemas\Components\Toggle;
+
 use Filament\Schemas\Schema;
-// YENİ MİMARİDE (FILAMENT 4) TÜM AKSİYONLAR BURADADIR:
+
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\Select as FormSelect;
-use Filament\Forms\Components\TextInput as FormTextInput;
-use Filament\Forms\Components\Toggle as FormToggle;
-use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\Action;
+
 use Filament\Tables\Table;
+use Filament\Tables\Columns\TextColumn;
+
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use SolutionForest\FilamentTree\Components\Tree;
@@ -41,21 +48,81 @@ class MenuItemsRelationManager extends RelationManager
             Section::make('Menü Öğesi Bilgileri')
                 ->columnSpanFull()
                 ->schema([
-                    FormSelect::make('parent_id')
-                        ->label('Üst Öğesi')
-                        ->relationship('parent', 'id')
-                        ->searchable()
-                        ->placeholder('Ana öğe'),
-                    FormTextInput::make('url')
-                        ->label('Manuel URL'),
-                    FormSelect::make('target')
+                   Select::make('parent_id')
+                            ->label('Üst Öğe')
+                            ->placeholder('Ana öğe')
+                            ->options(function () {
+                                return MenuItem::query()
+                                    ->where('menu_id', request('menu'))
+                                    ->pluck('title', 'id');
+                            })
+                            ->searchable()
+                            ->nullable(),
+                        
+                    Select::make('linkable_type')
+    ->label('Bağlantı Türü')
+    ->options([
+        Page::class => 'Sayfa',
+        \App\Models\Service::class => 'Hizmet',
+        'custom' => 'Özel URL',
+    ])
+    ->reactive()
+    ->required()
+    ->afterStateUpdated(fn ($set) => $set('linkable_id', null)),
+
+Select::make('linkable_id')
+    ->label('Bağlantı Seçin')
+    ->searchable()
+    ->required()
+    ->visible(fn ($get) =>
+        in_array($get('linkable_type'), [
+            Page::class,
+            Service::class,
+        ])
+    )
+    ->getSearchResultsUsing(function (string $search, $get) {
+        $type = $get('linkable_type');
+
+        if ($type === Page::class) {
+            return Page::where('title', 'like', "%{$search}%")
+                ->limit(20)
+                ->pluck('title', 'id');
+        }
+
+        if ($type === Service::class) {
+            return Service::whereHas('translations', function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%");
+                })
+                ->with('translations') // N+1 olmasın
+                ->get()
+                ->mapWithKeys(function ($service) {
+                    return [
+                        $service->id => $service->translations->first()?->title ?? 'Başlıksız Hizmet',
+                    ];
+                })
+                ->toArray();
+        }
+    })
+    ->getOptionLabelUsing(fn ($value, $get) => match ($get('linkable_type')) {
+        Page::class => Page::find($value)?->title,
+        Service::class => Service::find($value)?->active_translation?->title,
+        default => null,
+    }),
+
+    TextInput::make('url')
+                            ->label('Manuel URL')
+                            ->placeholder('https://...')
+                            ->visible(fn ($get) => $get('linkable_type') === 'custom')
+                            ->required(fn ($get) => $get('linkable_type') === 'custom'),
+
+                    Select::make('target')
                         ->label('Hedef')
                         ->options([
                             '_self' => 'Aynı Sayfa',
                             '_blank' => 'Yeni Sekme',
                         ])
                         ->default('_self'),
-                    FormToggle::make('active')
+                    Toggle::make('active')
                         ->label('Aktif')
                         ->default(true),
                     Tabs::make('Etiketler')
@@ -63,7 +130,7 @@ class MenuItemsRelationManager extends RelationManager
                             $languages->map(function ($lang) {
                                 return Tabs\Tab::make($lang->name)
                                     ->schema([
-                                        FormTextInput::make("translations.{$lang->id}.label")
+                                        TextInput::make("translations.{$lang->id}.label")
                                             ->label('Etiket')
                                             ->required($lang->is_default),
                                     ]);
@@ -210,10 +277,65 @@ class MenuItemsRelationManager extends RelationManager
                     ->color(fn($state) => $state ? 'success' : 'danger')
                     ->formatStateUsing(fn($state) => $state ? 'Aktif' : 'Pasif'),
             ])
+            /*
             ->headerActions([
                 CreateAction::make()
                     ->label('Yeni Öğe Ekle')
                     ->after(fn(MenuItem $record, array $data) => $this->saveTranslations($record, $data)),
+            ])
+            */
+            ->headerActions([
+                // Standart Tekli Ekleme
+                CreateAction::make()
+                    ->label('Yeni Öğe'),
+
+                // v4 UYUMLU TOPLU HİZMET EKLEME
+                Action::make('add_multiple_services')
+                    ->label('Toplu Hizmet Ekle')
+                    ->icon('heroicon-o-plus-circle')
+                    ->color('info')
+                    // v4'te aksiyon formları da artık Schema/Component kabul eder
+                    ->form([
+                        Select::make('service_ids')
+                            ->label('Hizmetleri Seçin')
+                            ->multiple()
+                            ->searchable()
+                            ->options(fn () => \App\Models\Service::all()->mapWithKeys(function ($service) {
+                                return [$service->id => $service->translations->first()?->title ?? "Hizmet #{$service->id}"];
+                            }))
+                            ->required(),
+                    ])
+                    ->action(function (array $data) {
+                        $ownerRecord = $this->getOwnerRecord();
+                        
+                        // Sıralamayı patlatmamak için son sırayı alalım
+                        $lastOrder = $ownerRecord->items()->max('sort_order') ?? 0;
+
+                        foreach ($data['service_ids'] as $serviceId) {
+                            $service = \App\Models\Service::with('translations')->find($serviceId);
+                            
+                            if (!$service) continue;
+
+                            $lastOrder++;
+
+                            // 1. Menü öğesini oluştur
+                            $menuItem = $ownerRecord->items()->create([
+                                'linkable_type' => \App\Models\Service::class,
+                                'linkable_id' => $serviceId,
+                                'target' => '_self',
+                                'active' => true,
+                                'sort_order' => $lastOrder,
+                            ]);
+
+                            // 2. Çevirileri otomatik bağla (Etiketleri tek tek yazmaktan kurtarır)
+                            foreach ($service->translations as $translation) {
+                                $menuItem->translations()->create([
+                                    'language_id' => $translation->language_id,
+                                    'label' => $translation->title,
+                                ]);
+                            }
+                        }
+                    }),
             ])
             ->actions([
                 EditAction::make()

@@ -6,20 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class SectionTranslation extends Model
 {
-    public $timestamps = false;
-
+    public $timestamps = true;
     protected $fillable = [
-        'title',
-        'subtitle',
-        'content',
-        'image',
-        'language_id',
-        'section_id',
-        'extra_fields',
+        'section_id', 'language_id', 'title', 'subtitle', 
+        'description', 'content', 'buttons', 'images', 'extra_fields'
     ];
 
     protected $casts = [
         'content' => 'array',
+        'buttons' => 'array',
+        'images' => 'array',
         'extra_fields' => 'array',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 }

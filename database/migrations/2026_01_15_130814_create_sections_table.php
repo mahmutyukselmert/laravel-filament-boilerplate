@@ -15,6 +15,8 @@ return new class extends Migration {
             $table->string('admin_title');  // Panelde "Ana Sayfa FAQ" diye görünmesi için
             $table->string('key')->unique();  // Kod tarafında çağırmak için: 'home_faq'
             $table->string('type');  // 'faq', 'slider', 'features' gibi
+            $table->json('images')->nullable();
+            $table->json('extra_fields')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
